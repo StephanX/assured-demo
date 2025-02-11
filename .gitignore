@@ -1,0 +1,15 @@
+.idea
+.DS_Store
+.terraform/*
+.terraform
+.terraform.lock.hcl
+.vscode/
+*kubeconfig*.json
+*kubeconfig*.yaml
+*fixtures.sensitive.tfvars
+*/fixtures.sensitive.tfvars
+fixtures.sensitive.tf_vars
+fixtures.sensitive.s3.tf_vars
+*kubernetes-secrets.tf
+terraform.tfstate*
+secrets.source
