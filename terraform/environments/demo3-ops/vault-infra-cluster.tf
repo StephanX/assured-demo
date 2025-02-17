@@ -81,6 +81,7 @@ data "template_file" "vault-values" {
           external-dns.alpha.kubernetes.io/hostname: vault.${var.root_domain}
           app.kubernetes.io/managed-by: "Helm"
 
+
         ingressClassName: traefik
         hosts:
           - host: vault.${var.root_domain}
@@ -121,7 +122,7 @@ resource "helm_release" "vault" {
   repository       = "https://helm.releases.hashicorp.com"
   chart            = "vault"
   namespace        = "vault"
-  version          = "0.29.1" # https://github.com/hashicorp/vault-helm/releases
+  version          = "0.29.1" # https://github.com/hashicorp/vault-helm/releases 11-2024
   values = [
     data.template_file.vault-values.rendered
   ]

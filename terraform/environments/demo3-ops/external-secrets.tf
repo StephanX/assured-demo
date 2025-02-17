@@ -100,11 +100,14 @@ resource "vault_kubernetes_auth_backend_role" "cluster" {
   # audience                         = "vault" #
 }
 
+# https://external-secrets.io/latest/
 resource "helm_release" "external-secrets" {
   name             = "external-secrets"
   repository       = "https://charts.external-secrets.io"
   chart            = "external-secrets"
-  namespace        = "external-secrets"
+  namespace        = kubernetes_namespace.external-secrets.metadata[0].name
+  version          = "v0.14.2"
+
   set {
     name = "installCRDs"
     value = "true"

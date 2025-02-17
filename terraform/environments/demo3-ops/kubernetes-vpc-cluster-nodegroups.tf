@@ -141,10 +141,14 @@ module "eks_cluster" {
 
 module "eks_node_group" {
   # https://github.com/cloudposse/terraform-aws-eks-node-group
-  source  = "cloudposse/eks-node-group/aws"
-  version = "3.3.0"
+  source        = "cloudposse/eks-node-group/aws"
+  version       = "3.3.0"
+
+  ami_image_id   = ["ami-0cb03ee023bdaf837"]
+  ami_type = "AL2_x86_64"
 
   # name = "default"
+  name = "" # TODO: use a name next time
   block_device_mappings = [
     {
       "device_name": "/dev/xvda"
@@ -189,9 +193,10 @@ module "eks_node_group_vault" {
   # https://github.com/cloudposse/terraform-aws-eks-node-group
   source  = "cloudposse/eks-node-group/aws"
   version = "3.3.0"
+  # ami_image_id   = ["ami-0cb03ee023bdaf837"]
+  ami_type = "AL2_x86_64"
 
   name = "vault"
-
 
   block_device_mappings = [
     {
