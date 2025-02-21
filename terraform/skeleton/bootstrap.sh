@@ -50,8 +50,10 @@ echo "WARNING: provisioning additional resources will require manually adding a 
 read -p "Pausing for discussion, press enter to continue, anything else to abort..."
 
 for file in \
+  route53.tf \
   context.tf \
-  kubernetes-vpc-cluster-nodegroups.tf
+  kubernetes-vpc-cluster-nodegroups.tf \
+  kubernetes-access.tf
 do
   ln -sf ../../skeleton/${file} .
 done
@@ -59,3 +61,7 @@ done
 terraform init
 
 terraform apply ${TF_FIXTURES} -auto-approve
+
+aws eks update-kubeconfig --name ops-cluster
+
+echo "UPDATE ROOT DOMAIN DNS NAME!"

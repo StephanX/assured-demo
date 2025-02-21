@@ -7,6 +7,18 @@ module "label" {
   context = module.this.context
 }
 
+  # Note: This example creates an explicit access entry for the current user,
+  # but in practice, you should use a static map of IAM users or roles that should have access to the cluster.
+  # Granting access to the current user in this way is not recommended for production use.
+  data "aws_caller_identity" "current" {}
+
+  # IAM session context converts an assumed role ARN into an IAM Role ARN.
+  # Again, this is primarily to simplify the example, and in practice, you should use a static map of IAM users or roles.
+  data "aws_iam_session_context" "current" {
+    arn = data.aws_caller_identity.current.arn
+  }
+
+
 locals {
 
   # public_access_cidrs = var.public_access_cidrs
@@ -26,19 +38,34 @@ locals {
   # EKS control plane will use the version specified by kubernetes_version variable.
   eks_worker_ami_name_filter = "amazon-eks-node-${var.kubernetes_version}*"
 
-  # Define user access map, permits kubectl access for users
+  #### WARNING: NOT SUITABLE FOR PRODUCTION CLUSTER  ########
+  # Enable the IAM user creating the cluster to administer it,
+  # without using the bootstrap_cluster_creator_admin_permissions option,
+  # as an example of how to use the access_entry_map feature.
+  # In practice, this should be replaced with a static map of IAM users or roles
+  # that should have access to the cluster, but we use the current user
+  # to simplify the example.
   access_entry_map = {
-    ("arn:aws:iam::968770163483:user/stephan") = {
-      access_policy_associations = {
-        ClusterAdmin = {}
-      }
-    },
-    ("arn:aws:iam::968770163483:user/robot") = {
+    (data.aws_iam_session_context.current.issuer_arn) = {
       access_policy_associations = {
         ClusterAdmin = {}
       }
     }
   }
+
+  # # Example on how to define user access map, permits kubectl access for users
+  # access_entry_map = {
+  #   ("arn:aws:iam::968770163483:user/stephan") = {
+  #     access_policy_associations = {
+  #       ClusterAdmin = {}
+  #     }
+  #   },
+  #   ("arn:aws:iam::968770163483:user/robot") = {
+  #     access_policy_associations = {
+  #       ClusterAdmin = {}
+  #     }
+  #   }
+  # }
 
   # required tags to make ALB ingress work https://docs.aws.amazon.com/eks/latest/userguide/alb-ingress.html
   public_subnets_additional_tags = {
