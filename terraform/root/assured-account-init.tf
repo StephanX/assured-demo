@@ -40,12 +40,12 @@ output "organizations_account_arn" {
 }
 
 output "organizations_account_id" {
-  value       = "${join("", aws_organizations_account.assured-demo1.*.id)}"
+  value       = "${join("", aws_organizations_account.assured-demo2.*.id)}"
   description = "The AWS account id."
 }
 
 output "organizations_account_name" {
-  value       = "${join("", aws_organizations_account.assured-demo1.*.name)}"
+  value       = "${join("", aws_organizations_account.assured-demo3.*.name)}"
   description = "The AWS account name."
 }
 

@@ -43,7 +43,7 @@ echo ""
 terraform init ${TF_FIXTURES} -migrate-state -force-copy
 
 # generate root domain Nameserver records
-terraform apply ${TF_FIXTURES} -auto-approve -target=aws_route53_zone.root
+# terraform apply ${TF_FIXTURES} -auto-approve -target=aws_route53_zone.root
 
 echo "WARNING: provisioning additional resources will require manually adding a credit card to the billing portal!  Ref: https://aws.amazon.com/registration-confirmation/"
 
