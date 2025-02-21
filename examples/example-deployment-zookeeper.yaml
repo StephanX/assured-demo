@@ -1,0 +1,90 @@
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: zookeeper-vol
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: gp2-encrypted
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper
+spec:
+  selector:
+    matchLabels:
+      app: zookeeper
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: zookeeper
+    spec:
+      containers:
+      - env:
+        - name: ZOOKEEPER_SERVERS
+          value: "1"
+        image: "komljen/zookeeper:3.4.10"
+        imagePullPolicy: IfNotPresent
+        name: zookeeper
+        ports:
+        - containerPort: 2181
+          name: client
+        - containerPort: 2888
+          name: server
+        - containerPort: 3888
+          name: leader-election
+        readinessProbe:
+          exec:
+            command:
+            - /opt/zookeeper/bin/zkOK.sh
+          initialDelaySeconds: 10
+          timeoutSeconds: 2
+          periodSeconds: 5
+        livenessProbe:
+          exec:
+            command:
+            - /opt/zookeeper/bin/zkOK.sh
+          initialDelaySeconds: 120
+          timeoutSeconds: 2
+          periodSeconds: 5
+        volumeMounts:
+        - mountPath: /data
+          name: zookeeper-data
+      restartPolicy: Always
+      volumes:
+      - name: zookeeper-data
+        persistentVolumeClaim:
+          claimName: zookeeper-vol
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+spec:
+  ports:
+  - name: client
+    port: 2181
+    targetPort: 2181
+  selector:
+    app: zookeeper
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper-server
+spec:
+  clusterIP: None
+  ports:
+  - name: server
+    port: 2888
+    targetPort: 2888
+  - name: leader-election
+    port: 3888
+    targetPort: 3888
+  selector:
+    app: zookeeper
