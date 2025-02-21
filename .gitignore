@@ -12,4 +12,4 @@ fixtures.sensitive.tf_vars
 fixtures.sensitive.s3.tf_vars
 *kubernetes-secrets.tf
 terraform.tfstate*
-secrets.source
+secrets*source
